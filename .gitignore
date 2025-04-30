@@ -1,0 +1,31 @@
+# Eclipse / Spring STS
+.metadata/
+*.classpath
+*.project
+*.settings/
+
+# Maven
+target/
+.mvn/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+
+# IDEs
+.idea/
+*.iml
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Backup and temp files
+*.bak
+*.swp
+*.swo
