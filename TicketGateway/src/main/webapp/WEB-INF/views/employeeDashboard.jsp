@@ -16,7 +16,7 @@
 
         <!-- USER button -->
         <security:authorize access="hasAuthority('USER')">
-            <button onclick="location.href=''">User Button</button>
+            <button onclick="location.href='/ticketForm'">Create Ticket</button>
         </security:authorize>
 		
 		<!-- MANAGER button -->

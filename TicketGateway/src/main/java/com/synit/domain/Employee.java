@@ -81,6 +81,9 @@ public class Employee {
 	public void setManagerId(String managerId) {
 		this.managerId = managerId;
 	}
+	public EmployeeDto toEmployeeDto() {
+		return new EmployeeDto(email, name, managerId);
+	}
 
 	public Employee() {
 		super();
