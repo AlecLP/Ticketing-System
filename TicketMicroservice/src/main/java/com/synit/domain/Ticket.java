@@ -27,9 +27,9 @@ public class Ticket {
 	private String description;
 	@Embedded
 	@AttributeOverrides({
-        @AttributeOverride(name = "email", column = @Column(name = "employee_email")),
-        @AttributeOverride(name = "name", column = @Column(name = "employee_name")),
-        @AttributeOverride(name = "managerId", column = @Column(name = "employee_managerid"))
+        @AttributeOverride(name = "email", column = @Column(name = "createdBy_email")),
+        @AttributeOverride(name = "name", column = @Column(name = "createdBy_name")),
+        @AttributeOverride(name = "managerId", column = @Column(name = "createdBy_managerid"))
     })
 	private Employee createdBy;
 	@Embedded

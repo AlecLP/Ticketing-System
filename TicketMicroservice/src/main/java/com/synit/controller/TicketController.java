@@ -60,9 +60,9 @@ public class TicketController {
 
 	    Priority p = Priority.valueOf(ticketDto.getPriority().toUpperCase());
 	    Ticket ticket = new Ticket(ticketDto.getTitle(), ticketDto.getDescription(),
-	    		ticketDto.getEmployee(), ticketDto.getAssignee(), p, Status.OPEN, new Date(),
+	    		ticketDto.getCreatedBy(), ticketDto.getAssignee(), p, Status.OPEN, new Date(),
 	    		ticketDto.getCategory(), fileAttachmentPath);
-	    TicketHistory ticketHistory = new TicketHistory(ticket, Action.CREATED, ticketDto.getEmployee(), new Date(), "Initial creation.");
+	    TicketHistory ticketHistory = new TicketHistory(ticket, Action.CREATED, ticketDto.getCreatedBy(), new Date(), "Initial creation.");
 	    ticket.addHistory(ticketHistory);
 
 	    ticketService.saveTicket(ticket);

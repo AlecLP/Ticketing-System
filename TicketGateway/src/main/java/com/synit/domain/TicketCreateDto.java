@@ -5,7 +5,7 @@ public class TicketCreateDto {
     private String description;
     private String category;
     private String priority;
-    private EmployeeDto employee;
+    private EmployeeDto createdBy;
     private EmployeeDto assignee;
     
 	public String getTitle() {
@@ -32,11 +32,11 @@ public class TicketCreateDto {
 	public void setPriority(String priority) {
 		this.priority = priority;
 	}
-	public EmployeeDto getEmployee() {
-		return employee;
+	public EmployeeDto getCreatedBy() {
+		return createdBy;
 	}
-	public void setEmployee(EmployeeDto employee) {
-		this.employee = employee;
+	public void setCreatedBy(EmployeeDto createdBy) {
+		this.createdBy = createdBy;
 	}
 	public EmployeeDto getAssignee() {
 		return assignee;

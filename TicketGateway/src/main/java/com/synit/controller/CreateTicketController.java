@@ -38,7 +38,7 @@ public class CreateTicketController {
 	    ticketDto.setDescription(description);
 	    ticketDto.setCategory(category);
 	    ticketDto.setPriority(priority);
-	    ticketDto.setEmployee(employee.toEmployeeDto());
+	    ticketDto.setCreatedBy(employee.toEmployeeDto());
 	    ticketDto.setAssignee(assignee.toEmployeeDto());
 	    
 	    try {
