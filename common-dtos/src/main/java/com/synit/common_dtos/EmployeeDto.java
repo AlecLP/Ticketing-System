@@ -1,4 +1,4 @@
-package com.synit.domain;
+package com.synit.common_dtos;
 
 public class EmployeeDto {
 	
@@ -30,5 +30,7 @@ public class EmployeeDto {
 		this.name = name;
 		this.managerId = managerId;
 	}
+	
+	public EmployeeDto() {}
 
 }

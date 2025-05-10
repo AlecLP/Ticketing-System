@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.synit.common_dtos.TicketCreateDto;
 import com.synit.component.TicketMicroserviceClient;
 import com.synit.domain.Employee;
-import com.synit.domain.TicketCreateDto;
 import com.synit.service.EmployeeService;
 
 @Controller

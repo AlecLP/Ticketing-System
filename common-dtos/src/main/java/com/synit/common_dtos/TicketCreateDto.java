@@ -1,4 +1,4 @@
-package com.synit.domain;
+package com.synit.common_dtos;
 
 public class TicketCreateDto {
     private String title;
@@ -46,4 +46,3 @@ public class TicketCreateDto {
 	}
     
 }
-

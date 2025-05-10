@@ -82,6 +82,11 @@
 			<artifactId>tomcat-embed-jasper</artifactId>
 			<version>10.1.4</version>
 		</dependency>
+		<dependency>
+        	<groupId>com.synit</groupId>
+        	<artifactId>common-dtos</artifactId>
+        	<version>1.0.0</version>
+   	    </dependency>
 	</dependencies>
 
 	<build>

@@ -2,6 +2,8 @@ package com.synit.domain;
 
 import java.util.Date;
 
+import com.synit.common_enums.Action;
+
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

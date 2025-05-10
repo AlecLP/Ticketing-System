@@ -5,8 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.synit.domain.Priority;
-import com.synit.domain.Status;
+import com.synit.common_enums.Priority;
+import com.synit.common_enums.Status;
 import com.synit.domain.Ticket;
 import com.synit.repository.TicketRepository;
 

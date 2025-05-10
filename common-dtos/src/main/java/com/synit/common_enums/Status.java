@@ -1,4 +1,4 @@
-package com.synit.domain;
+package com.synit.common_enums;
 
 public enum Status {
 	OPEN,

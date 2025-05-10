@@ -17,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.synit.domain.Action;
-import com.synit.domain.Priority;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.synit.common_dtos.TicketCreateDto;
+import com.synit.common_enums.Action;
+import com.synit.common_enums.Priority;
+import com.synit.common_enums.Status;
+import com.synit.domain.Employee;
 import com.synit.domain.Ticket;
-import com.synit.domain.TicketCreateDto;
 import com.synit.domain.TicketHistory;
-import com.synit.domain.Status;
 import com.synit.service.TicketHistoryService;
 import com.synit.service.TicketService;
 
@@ -35,6 +37,7 @@ public class TicketController {
 	TicketHistoryService ticketHistoryService;
 	@Value("${ticket.upload.dir}")
     private String uploadDir;
+	private final ObjectMapper objectMapper = new ObjectMapper();
 	
 	@PostMapping("/createTicket")
 	public ResponseEntity<String> createTicket(
@@ -57,12 +60,14 @@ public class TicketController {
 	        }
 	        fileAttachmentPath = filePath.toAbsolutePath().toString();
 	    }
-
+	    
+	    Employee createdBy = objectMapper.convertValue(ticketDto.getCreatedBy(), Employee.class);
+	    Employee assignee = objectMapper.convertValue(ticketDto.getAssignee(), Employee.class);
 	    Priority p = Priority.valueOf(ticketDto.getPriority().toUpperCase());
 	    Ticket ticket = new Ticket(ticketDto.getTitle(), ticketDto.getDescription(),
-	    		ticketDto.getCreatedBy(), ticketDto.getAssignee(), p, Status.OPEN, new Date(),
+	    		createdBy, assignee, p, Status.OPEN, new Date(),
 	    		ticketDto.getCategory(), fileAttachmentPath);
-	    TicketHistory ticketHistory = new TicketHistory(ticket, Action.CREATED, ticketDto.getCreatedBy(), new Date(), "Initial creation.");
+	    TicketHistory ticketHistory = new TicketHistory(ticket, Action.CREATED, createdBy, new Date(), "Initial creation.");
 	    ticket.addHistory(ticketHistory);
 
 	    ticketService.saveTicket(ticket);
