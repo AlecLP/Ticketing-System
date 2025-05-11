@@ -21,7 +21,7 @@
 		
 		<!-- MANAGER button -->
 		        <security:authorize access="hasAuthority('MANAGER')">
-		            <button onclick="location.href=''">Manager Button</button>
+		            <button onclick="location.href='/managerDashboard'">Manager Dashboard</button>
 		        </security:authorize>
 
         <!-- ADMIN button -->

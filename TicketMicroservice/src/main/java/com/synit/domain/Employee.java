@@ -1,5 +1,7 @@
 package com.synit.domain;
 
+import com.synit.common_dtos.EmployeeDto;
+
 import jakarta.persistence.Embeddable;
 
 @Embeddable
@@ -26,6 +28,13 @@ public class Employee {
 	}
 	public void setManagerId(String managerId) {
 		this.managerId = managerId;
+	}
+	public EmployeeDto toEmployeeDto() {
+		EmployeeDto dto = new EmployeeDto();
+		dto.setEmail(email);
+		dto.setName(name);
+		dto.setManagerId(managerId);
+		return dto;
 	}
 	
 	public Employee() {}

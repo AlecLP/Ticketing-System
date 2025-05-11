@@ -21,8 +21,13 @@
 	        <label for="category">Category:</label><br/>
 	        <input type="text" name="category" id="category" required/><br/><br/>
 			
-			<label for="category">Priority:</label><br/>
-			<input type="text" name="priority" id="priority" required/><br/><br/>
+			<label for="priority">Priority:</label><br/>
+			<select name="priority" id="priority" required>
+				<option value="" disabled selected>Select priority</option>
+			    <c:forEach var="priority" items="${priorities}">
+			        <option value="${priority}">${priority}</option>
+			    </c:forEach>
+			</select><br/><br/>
 
 	        <label for="file">Attach File:</label><br/>
 	        <input type="file" name="file" id="file"/><br/><br/>

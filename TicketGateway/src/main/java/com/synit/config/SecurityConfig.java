@@ -22,25 +22,27 @@ public class SecurityConfig {
 		return new BCryptPasswordEncoder();
 	}
 	
+	@SuppressWarnings("deprecation")
 	@Bean
 	public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-		http
-			.apply(MyCustomDsl.customDsl())
-			.flag(true).and()
-			.authorizeRequests()
-				.requestMatchers("/").permitAll()
-				.requestMatchers("/employeeDashboard").authenticated()
-					.and()
-						.exceptionHandling().accessDeniedPage("/accessDeniedPage").and()
-			.formLogin()
-				.loginPage("/login")
-				.usernameParameter("email")
-				.defaultSuccessUrl("/employeeDashboard").permitAll().and()
-			.logout()
-				.logoutSuccessUrl("/")
-				.invalidateHttpSession(true)
-				.deleteCookies("JSESSIONID")
-				.permitAll();
+        http
+                .apply(MyCustomDsl.customDsl())
+                .flag(true).and()
+                .authorizeRequests(requests -> requests
+                        .requestMatchers("/").permitAll()
+                        .requestMatchers("/employeeDashboard").authenticated()
+                        .requestMatchers("/ticketForm").hasAuthority("USER")
+                		.requestMatchers("/managerDashboard").hasAuthority("MANAGER"))
+                .exceptionHandling(handling -> handling.accessDeniedPage("/accessDeniedPage"))
+                .formLogin(login -> login
+                        .loginPage("/login")
+                        .usernameParameter("email")
+                        .defaultSuccessUrl("/employeeDashboard").permitAll())
+                .logout(logout -> logout
+                        .logoutSuccessUrl("/")
+                        .invalidateHttpSession(true)
+                        .deleteCookies("JSESSIONID")
+                        .permitAll());
 		http.userDetailsService(userDetailsService);
 		return http.build();
 	}

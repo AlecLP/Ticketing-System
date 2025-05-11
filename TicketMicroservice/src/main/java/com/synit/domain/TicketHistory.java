@@ -39,6 +39,8 @@ public class TicketHistory {
 		this.comments = comments;
 	}
 	
+	public TicketHistory() {}
+	
 	public long getId() {
 		return id;
 	}

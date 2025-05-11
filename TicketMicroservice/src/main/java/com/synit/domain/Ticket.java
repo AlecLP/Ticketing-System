@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.synit.common_dtos.TicketDto;
 import com.synit.common_enums.Priority;
 import com.synit.common_enums.Status;
 
@@ -66,6 +67,8 @@ public class Ticket {
 		this.fileAttachmentPath = fileAttachmentPath;
 		this.history = new ArrayList<>();
 	}
+	
+	public Ticket() {}
 	
 	public long getId() {
 		return id;
@@ -135,5 +138,19 @@ public class Ticket {
 	}
 	public void addHistory(TicketHistory history) {
 		this.history.add(history);
+	}
+	public TicketDto toTicketDto() {
+		TicketDto dto = new TicketDto();
+		dto.setId(id);
+		dto.setTitle(title);
+		dto.setDescription(description);
+		dto.setCreatedBy(createdBy.toEmployeeDto());
+		dto.setAssignee(assignee.toEmployeeDto());
+		dto.setPriority(priority);
+		dto.setStatus(status);
+		dto.setTicket_date(ticket_date);
+		dto.setCategory(category);
+		dto.setHasFile(fileAttachmentPath != null && !fileAttachmentPath.isBlank());
+		return dto;
 	}
 }

@@ -44,5 +44,11 @@ public class EmployeeService {
 	public Employee findByEmployeeId(long id) {
 		return employeeRepository.findById(id).orElse(null);
 	}
+	
+	public List<String> findByManagerId(long managerId){
+		List<Employee> employees = employeeRepository.findByManagerId("" +managerId);
+		List<String> emails = employees.stream().map(Employee::getEmail).toList();
+		return emails;
+	}
 
 }

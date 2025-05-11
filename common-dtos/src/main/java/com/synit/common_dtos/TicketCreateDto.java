@@ -1,10 +1,12 @@
 package com.synit.common_dtos;
 
+import com.synit.common_enums.Priority;
+
 public class TicketCreateDto {
     private String title;
     private String description;
     private String category;
-    private String priority;
+    private Priority priority;
     private EmployeeDto createdBy;
     private EmployeeDto assignee;
     
@@ -26,10 +28,10 @@ public class TicketCreateDto {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getPriority() {
+	public Priority getPriority() {
 		return priority;
 	}
-	public void setPriority(String priority) {
+	public void setPriority(Priority priority) {
 		this.priority = priority;
 	}
 	public EmployeeDto getCreatedBy() {
