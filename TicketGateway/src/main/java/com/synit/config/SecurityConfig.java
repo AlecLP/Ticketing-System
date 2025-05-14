@@ -31,8 +31,10 @@ public class SecurityConfig {
                 .authorizeRequests(requests -> requests
                         .requestMatchers("/").permitAll()
                         .requestMatchers("/employeeDashboard").authenticated()
+                        .requestMatchers("/viewTickets").hasAuthority("USER")
                         .requestMatchers("/ticketForm").hasAuthority("USER")
-                		.requestMatchers("/managerDashboard").hasAuthority("MANAGER"))
+                		.requestMatchers("/managerDashboard").hasAuthority("MANAGER")
+                		.requestMatchers("/adminDashboard").hasAuthority("ADMIN"))
                 .exceptionHandling(handling -> handling.accessDeniedPage("/accessDeniedPage"))
                 .formLogin(login -> login
                         .loginPage("/login")

@@ -20,6 +20,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synit.common_dtos.TicketCreateDto;
 import com.synit.common_dtos.TicketDecisionsDto;
 import com.synit.common_dtos.TicketDto;
+import com.synit.common_dtos.TicketHistoryDto;
 
 @Component
 public class TicketMicroserviceClient {
@@ -27,6 +28,9 @@ public class TicketMicroserviceClient {
 	private static final String TICKET_POST_URL = "http://localhost:8282/createTicket";
 	private static final String TICKET_GET_BY_EMAILS_URL = "http://localhost:8282/getByEmails";
 	private static final String TICKET_PROCESS_TICKETS_URL = "http://localhost:8282/processApprovalsAndRejections";
+	private static final String TICKET_GET_ADMIN_TICKETS_URL = "http://localhost:8282/getAdminTickets";
+	private static final String TICKET_SEND_ADMIN_DECISIONS ="http://localhost:8282/processAdminDecisions";
+	private static final String TICKET_HISTORY_URL = "http://localhost:8282/getTicketHistory";
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final RestTemplate restTemplate = new RestTemplate();
 	
@@ -74,5 +78,41 @@ public class TicketMicroserviceClient {
 		HttpEntity<TicketDecisionsDto> request = new HttpEntity<>(dto, headers);
 		restTemplate.postForEntity(TICKET_PROCESS_TICKETS_URL, request, Void.class);
 	}
-
+	
+	public List<TicketDto> sendGetAdminTicketsRequest(String email) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<String> request = new HttpEntity<>(email, headers);
+		ResponseEntity<List<TicketDto>> response = restTemplate.exchange(
+				TICKET_GET_ADMIN_TICKETS_URL,
+				HttpMethod.POST,
+				request,
+				new ParameterizedTypeReference<List<TicketDto>>() {}
+		);
+		return response.getBody();
+	}
+	
+	public void sendAdminDecisions(TicketDecisionsDto dto) {
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<TicketDecisionsDto> request = new HttpEntity<>(dto, headers);
+		restTemplate.postForEntity(TICKET_SEND_ADMIN_DECISIONS, request, Void.class);
+	}
+	
+	public List<TicketHistoryDto> sendGetTicketHistoryRequest(Long id){
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		
+		HttpEntity<Long> request = new HttpEntity<>(id, headers);
+		ResponseEntity<List<TicketHistoryDto>> response = restTemplate.exchange(
+				TICKET_HISTORY_URL,
+				HttpMethod.POST,
+				request,
+				new ParameterizedTypeReference<List<TicketHistoryDto>>() {}
+		);
+		
+		return response.getBody();
+	}
 }

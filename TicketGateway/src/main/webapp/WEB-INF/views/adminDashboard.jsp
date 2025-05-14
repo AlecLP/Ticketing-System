@@ -4,14 +4,14 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Manager Dashboard</title>
+    <title>Admin Dashboard</title>
 </head>
 <body>
     <security:authorize access="isAuthenticated()">
         
 		<h2>Tickets</h2>
 		<c:if test="${not empty tickets}">
-			<form method="post" action="/processTickets">
+			<form method="post" action="/adminTickets">
 				<table border="1">
 			        <thead>
 			            <tr>
@@ -64,8 +64,7 @@
 								<td>
 			                        <select name="actions[${ticket.id}]">
 			                            <option value="">-- Select --</option>
-			                            <option value="APPROVED">Approve</option>
-			                            <option value="REJECTED">Reject</option>
+			                            <option value="RESOLVED">Resolve</option>
 			                        </select>
 			                    </td>
 			                </tr>
@@ -74,11 +73,11 @@
 			    </table>
 				<button type="submit">Submit Decisions</button>
 			</form>
-			<button onclick="history.back()">Back</button>
 		</c:if>
 		<c:if test="${empty tickets}">
 			No Tickets Found
 		</c:if>
+		<button onclick="history.back()">Back</button>
     </security:authorize>
 </body>
 </html>

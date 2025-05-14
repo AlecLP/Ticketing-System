@@ -37,9 +37,10 @@ public class TicketService {
 		if(ticket != null) {
 			List<TicketHistory> history = ticket.getHistory();
 			Action action = switch(status) {
-			case APPROVED -> Action.APPROVED;
-			case REJECTED -> Action.REJECTED;
-			default -> throw new IllegalArgumentException("Unexpected value: " + status);
+				case APPROVED -> Action.APPROVED;
+				case REJECTED -> Action.REJECTED;
+				case RESOLVED -> Action.RESOLVED;
+				default -> throw new IllegalArgumentException("Unexpected value: " + status);
 			};
 			TicketHistory newHistory = new TicketHistory(ticket, action, employee, new Date(), "");
 			history.add(newHistory);
@@ -48,7 +49,7 @@ public class TicketService {
 			if(action == Action.APPROVED) {
 				ticket.setAssignee(assignee);
 			}
-			else {
+			else if(action == Action.REJECTED){
 				ticket.setAssignee(null);
 			}
 			ticketRepository.save(ticket);
@@ -65,6 +66,10 @@ public class TicketService {
 			tickets.addAll(ticketRepository.findByCreatedByEmailAndStatus(email, Status.OPEN));
 		}
 		return tickets;
+	}
+	
+	public List<Ticket> getAdminTickets(String email){
+		return ticketRepository.findByAssigneeEmail(email);
 	}
 
 }

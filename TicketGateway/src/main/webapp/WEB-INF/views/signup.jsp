@@ -15,13 +15,14 @@
 </head>
 	<body>
 		<form action='/signup' method='post'>	
-		Email: <input type='text' name='email'/></br>
-		Password: <input type='text' name='password'/></br>
-		Name: <input type='text' name='name'/></br>
-		Department: <input type='text' name='department'/></br>
-		Project: <input type='text' name='project'/></br>
-		Manager ID: <input type='text' name='managerId'/></br>
-		<input type='submit' value='SIGNUP' id='signup'>
+			Email: <input type='text' name='email'/></br>
+			Password: <input type='text' name='password'/></br>
+			Name: <input type='text' name='name'/></br>
+			Department: <input type='text' name='department'/></br>
+			Project: <input type='text' name='project'/></br>
+			Manager ID: <input type='text' name='managerId'/></br>
+			<input type='submit' value='SIGNUP' id='signup'>
 		</form>
+		<button onclick="history.back()">Back</button>
 	</body>
 </html>

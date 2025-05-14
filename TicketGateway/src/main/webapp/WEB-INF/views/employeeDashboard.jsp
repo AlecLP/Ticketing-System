@@ -19,6 +19,10 @@
             <button onclick="location.href='/ticketForm'">Create Ticket</button>
         </security:authorize>
 		
+		<security:authorize access="hasAuthority('USER')">
+            <button onclick="location.href='/viewTickets'">View Submitted Tickets</button>
+        </security:authorize>
+		
 		<!-- MANAGER button -->
 		        <security:authorize access="hasAuthority('MANAGER')">
 		            <button onclick="location.href='/managerDashboard'">Manager Dashboard</button>
@@ -26,7 +30,7 @@
 
         <!-- ADMIN button -->
         <security:authorize access="hasAuthority('ADMIN')">
-            <button onclick="location.href=''">Admin Button</button>
+            <button onclick="location.href='/adminDashboard'">Admin Dashboard</button>
         </security:authorize>
 		
 		<!-- LOGOUT button -->

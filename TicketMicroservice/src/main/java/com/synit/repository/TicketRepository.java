@@ -12,5 +12,7 @@ import com.synit.domain.Ticket;
 public interface TicketRepository extends JpaRepository<Ticket, Long>{
 	
 	public List<Ticket> findByCreatedByEmailAndStatus(String email, Status status);
+	
+	public List<Ticket> findByAssigneeEmail(String email);
 
 }

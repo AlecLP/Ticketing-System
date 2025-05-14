@@ -31,6 +31,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synit.common_dtos.TicketCreateDto;
 import com.synit.common_dtos.TicketDecisionsDto;
 import com.synit.common_dtos.TicketDto;
+import com.synit.common_dtos.TicketHistoryDto;
 import com.synit.common_enums.Action;
 import com.synit.common_enums.Status;
 import com.synit.domain.Employee;
@@ -134,6 +135,30 @@ public class TicketController {
 			ticketService.updateTicket(ticketId, status, employee, assignee);
 		});
 		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/getAdminTickets")
+	public List<TicketDto> getAdminTickets(@RequestBody String email){
+		List<Ticket> tickets = ticketService.getAdminTickets(email);
+		List<TicketDto> dtos = new ArrayList<>();
+		for(Ticket t : tickets) {
+			dtos.add(t.toTicketDto());
+		}
+		return dtos;
+	}
+	
+	@PostMapping("/processAdminDecisions")
+	public ResponseEntity<Void> processAdminDecisions(@RequestBody TicketDecisionsDto dto){
+		dto.getDecisions().forEach((ticketId, decision) -> {
+			Employee employee = objectMapper.convertValue(dto.getEmployee(), Employee.class);
+			ticketService.updateTicket(ticketId, Status.RESOLVED, employee, null);
+		});
+		return ResponseEntity.ok().build();
+	}
+	
+	@PostMapping("/getTicketHistory")
+	public List<TicketHistoryDto> getTicketHistory(@RequestBody Long id){
+		return ticketHistoryService.getTicketHistoryByTicketId(id);
 	}
 
 }

@@ -34,6 +34,7 @@
 
 	        <input type="submit" value="Submit"/>
 	    </form>
+		<button onclick="history.back()">Back</button>
 	
     </security:authorize>
 </body>
