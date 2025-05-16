@@ -3,6 +3,7 @@ package com.synit.domain;
 import java.util.Date;
 
 import com.synit.common_enums.Action;
+import com.synit.dtos.TicketHistoryDto;
 
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
@@ -20,24 +21,21 @@ public class TicketHistory {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
+	
 	@ManyToOne
     @JoinColumn(name = "ticket_id")
     private Ticket ticket;
+	
 	@Enumerated(EnumType.STRING)
 	private Action action;
+	
 	@Embedded
+	@ManyToOne
+	@JoinColumn(name = "actionBy")
 	private Employee actionBy;
+	
 	private Date actionDate;
 	private String comments;
-	
-	
-	public TicketHistory(Ticket ticket, Action action, Employee actionBy, Date actionDate, String comments) {
-		this.ticket = ticket;
-		this.action = action;
-		this.actionBy = actionBy;
-		this.actionDate = actionDate;
-		this.comments = comments;
-	}
 	
 	public TicketHistory() {}
 	
@@ -76,5 +74,13 @@ public class TicketHistory {
 	}
 	public void setComments(String comments) {
 		this.comments = comments;
+	}
+	public TicketHistoryDto toDto() {
+		TicketHistoryDto dto = new TicketHistoryDto();
+		dto.setAction(action);
+		dto.setActionBy(actionBy.getEmail());
+		dto.setActionDate(actionDate);
+		dto.setComments(comments);
+		return dto;
 	}
 }

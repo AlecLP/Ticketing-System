@@ -24,7 +24,7 @@ public class Role {
 	private RoleName roleName;
 	
 	@ManyToMany(mappedBy="roles")
-	Set<Employee> employees = new HashSet<>();
+	Set<User> users = new HashSet<>();
 
 	public long getId() {
 		return id;
@@ -42,12 +42,12 @@ public class Role {
 		this.roleName = roleName;
 	}
 
-	public Set<Employee> getUsers() {
-		return employees;
+	public Set<User> getUsers() {
+		return users;
 	}
 
-	public void setUsers(Set<Employee> employees) {
-		this.employees = employees;
+	public void setUsers(Set<User> users) {
+		this.users = users;
 	}
 
 	public Role() {

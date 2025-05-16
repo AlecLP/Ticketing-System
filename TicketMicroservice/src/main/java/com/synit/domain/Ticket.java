@@ -4,21 +4,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import com.synit.common_dtos.TicketDto;
 import com.synit.common_enums.Priority;
 import com.synit.common_enums.Status;
+import com.synit.dtos.TicketSendDto;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.AttributeOverrides;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 @Entity
@@ -27,46 +26,31 @@ public class Ticket {
 	@Id
 	@GeneratedValue(strategy=GenerationType.AUTO)
 	private long id;
+	
 	private String title;
 	private String description;
-	@Embedded
-	@AttributeOverrides({
-        @AttributeOverride(name = "email", column = @Column(name = "createdBy_email")),
-        @AttributeOverride(name = "name", column = @Column(name = "createdBy_name")),
-        @AttributeOverride(name = "managerId", column = @Column(name = "createdBy_managerid"))
-    })
+	
+	@ManyToOne
+	@JoinColumn(name = "created_by_email")
 	private Employee createdBy;
-	@Embedded
-	@AttributeOverrides({
-		@AttributeOverride(name = "email", column = @Column(name = "assignee_email")),
-        @AttributeOverride(name = "name", column = @Column(name = "assignee_name")),
-        @AttributeOverride(name = "managerId", column = @Column(name = "assignee_managerid"))
-    })
+	
+	@ManyToOne
+	@JoinColumn(name = "assignee_email")
 	private Employee assignee;
 	
 	@Enumerated(EnumType.STRING)
 	private Priority priority;
+	
 	@Enumerated(EnumType.STRING)
 	private Status status;
+	
 	private Date ticket_date;
 	private String category;
-	private String fileAttachmentPath;
-	@OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<TicketHistory> history;
+	@ElementCollection
+	private List<String> fileAttachmentPaths = new ArrayList<>();
 	
-	public Ticket(String title, String description, Employee createdBy, Employee assignee, 
-			Priority priority, Status status, Date ticket_date, String category, String fileAttachmentPath) {
-		this.title = title;
-		this.description = description;
-		this.createdBy = createdBy;
-		this.assignee = assignee;
-		this.priority = priority;
-		this.status = status;
-		this.ticket_date = ticket_date;
-		this.category = category;
-		this.fileAttachmentPath = fileAttachmentPath;
-		this.history = new ArrayList<>();
-	}
+	@OneToMany(mappedBy = "ticket", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TicketHistory> history = new ArrayList<>();
 	
 	public Ticket() {}
 	
@@ -124,11 +108,11 @@ public class Ticket {
 	public void setCategory(String category) {
 		this.category = category;
 	}
-	public String getfileAttachmentPath() {
-		return fileAttachmentPath;
+	public List<String> getFileAttachmentPaths() {
+		return fileAttachmentPaths;
 	}
-	public void setfileAttachmentPath(String fileAttachmentPath) {
-		this.fileAttachmentPath = fileAttachmentPath;
+	public void setFileAttachmentPaths(List<String> fileAttachmentPaths) {
+		this.fileAttachmentPaths = fileAttachmentPaths;
 	}
 	public List<TicketHistory> getHistory() {
 		return history;
@@ -139,18 +123,19 @@ public class Ticket {
 	public void addHistory(TicketHistory history) {
 		this.history.add(history);
 	}
-	public TicketDto toTicketDto() {
-		TicketDto dto = new TicketDto();
+	
+	public TicketSendDto toSendDto() {
+		TicketSendDto dto = new TicketSendDto();
 		dto.setId(id);
 		dto.setTitle(title);
 		dto.setDescription(description);
-		dto.setCreatedBy(createdBy.toEmployeeDto());
-		dto.setAssignee(assignee.toEmployeeDto());
+		dto.setCreatedBy(createdBy.getEmail());
+		dto.setAssignee(assignee.getEmail());
 		dto.setPriority(priority);
 		dto.setStatus(status);
 		dto.setTicket_date(ticket_date);
 		dto.setCategory(category);
-		dto.setHasFile(fileAttachmentPath != null && !fileAttachmentPath.isBlank());
+		dto.setFileAttachmentPaths(fileAttachmentPaths);
 		return dto;
 	}
 }

@@ -1,16 +1,33 @@
 package com.synit.domain;
 
-import com.synit.common_dtos.EmployeeDto;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 
-import jakarta.persistence.Embeddable;
-
-@Embeddable
+@Entity
 public class Employee {
 	
+	@Id
+	@Column(unique=true)
 	private String email;
-	private String name;
-	private String managerId;
 	
+	private String name;
+	private String department;
+	private String project;
+	private String managerEmail;
+	
+	public String getDepartment() {
+		return department;
+	}
+	public void setDepartment(String department) {
+		this.department = department;
+	}
+	public String getProject() {
+		return project;
+	}
+	public void setProject(String project) {
+		this.project = project;
+	}
 	public String getEmail() {
 		return email;
 	}
@@ -23,18 +40,11 @@ public class Employee {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public String getManagerId() {
-		return managerId;
+	public String getManagerEmail() {
+		return managerEmail;
 	}
-	public void setManagerId(String managerId) {
-		this.managerId = managerId;
-	}
-	public EmployeeDto toEmployeeDto() {
-		EmployeeDto dto = new EmployeeDto();
-		dto.setEmail(email);
-		dto.setName(name);
-		dto.setManagerId(managerId);
-		return dto;
+	public void setManagerEmail(String managerEmail) {
+		this.managerEmail = managerEmail;
 	}
 	
 	public Employee() {}

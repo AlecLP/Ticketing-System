@@ -2,82 +2,157 @@
 <%@ taglib prefix="security" uri="http://www.springframework.org/security/tags" %>
 
 <!DOCTYPE html>
+<script src="https://code.jquery.com/jquery-3.6.3.min.js" integrity="sha256-pvPw+upLPUjgMXY0G+8O0xUf+/Im1MZjXxxgOcBQBXU=" crossorigin="anonymous"></script>
 <html>
 <head>
     <title>Admin Dashboard</title>
 </head>
 <body>
-    <security:authorize access="isAuthenticated()">
-        
-		<h2>Tickets</h2>
-		<c:if test="${not empty tickets}">
-			<form method="post" action="/adminTickets">
-				<table border="1">
-			        <thead>
-			            <tr>
-			                <th>ID</th>
-							<th>Title</th>
-							<th>Description</th>
-							<th>Created By</th>
-							<th>Assignee</th>
-							<th>Priority</th>
-							<th>Status</th>
-							<th>Date Created</th>
-							<th>Category</th>
-							<th>File</th>
-							<th>Action</th>
-			            </tr>
-			        </thead>
-			        <tbody>
-			            <c:forEach var="ticket" items="${tickets}">
-			                <tr>
-			                    <td>${ticket.id}</td>
-								<td>${ticket.title}</td>
-								<td>${ticket.description}</td>
-								<td>${ticket.createdBy.email}</td>
-								<td>
-								    <c:choose>
-								        <c:when test="${not empty ticket.assignee}">
-								            ${ticket.assignee.email}
-								        </c:when>
-								        <c:otherwise>
-								            N/A
-								        </c:otherwise>
-								    </c:choose>
-								</td>
-								<td>${ticket.priority}</td>
-								<td>${ticket.status}</td>
-								<td>${ticket.ticket_date}</td>
-								<td>${ticket.category}</td>
-								<td>
-								    <c:choose>
-										<c:when test="${ticket.hasFile}">
-									        <a href="http://localhost:8282/tickets/${ticket.id}/download">
-									            <button type="button">Download File</button>
-									        </a>
-									    </c:when>
-									    <c:otherwise>
-									        No File
-									    </c:otherwise>
-								    </c:choose>
-								</td>
-								<td>
-			                        <select name="actions[${ticket.id}]">
-			                            <option value="">-- Select --</option>
-			                            <option value="RESOLVED">Resolve</option>
-			                        </select>
-			                    </td>
-			                </tr>
-			            </c:forEach>
-			        </tbody>
-			    </table>
-				<button type="submit">Submit Decisions</button>
-			</form>
-		</c:if>
-		<c:if test="${empty tickets}">
-			No Tickets Found
-		</c:if>
+	<h2>Tickets</h2>
+	<security:authorize access="isAuthenticated()">
+		<table border="1" id="ticketsTable">
+		  <thead>
+		    <tr>
+		      <th>Title</th>
+		      <th>Description</th>
+		      <th>Created By</th>
+		      <th>Assignee</th>
+		      <th>Priority</th>
+		      <th>Status</th>
+		      <th>Date</th>
+		      <th>Category</th>
+		      <th>Files</th>
+			  <th>History</th>
+			  <th>Action</th>
+		    </tr>
+		  </thead>
+		  <tbody>
+		    <!-- JS will insert rows here -->
+		  </tbody>
+		</table>
+		<div id="ticketHistoryContainer" style="margin-top: 20px; display: none; border: 1px solid #ccc; padding: 10px;">
+		    <h3>Ticket History</h3>
+		    <div id="ticketHistoryContent"></div>
+		</div>
+		<button onclick="submitDecisions()">Submit Decisions</button><br>
 		<button onclick="history.back()">Back</button>
-    </security:authorize>
+	</security:authorize>
+	<script>
+		let currentHistoryTicketId = null;
+		var currentUser = "${pageContext.request.userPrincipal.name}"
+		$(document).ready(function() {
+			$.ajax({
+			    url: "http://localhost:8282/getAdminTickets",
+			    type: "POST",
+				data: JSON.stringify({
+					email : currentUser
+				}),
+			    contentType: "application/json",
+			    success: function(data) {
+			        populateTicketsTable(data);
+			    },
+			    error: function(xhr, status, error) {
+			        alert("Error fetching tickets: " + error);
+			    }
+			})
+		})
+		
+		function populateTicketsTable(tickets) {
+		    const tableBody = $("#ticketsTable tbody");
+		    tableBody.empty();
+		    tickets.forEach(ticket => {
+				let downloadButton = '';
+
+		        if (ticket.fileAttachmentPaths && ticket.fileAttachmentPaths.length > 0) {
+					downloadButton = "<button onclick=\"downloadFiles("+ticket.id+")\">Download Files</button>"
+		        }
+				let actionsSelector = "<select class=\"ticketAction\" data-ticket-id=\""+ticket.id+"\"><option value=\"\">-- Select --</option><option value=\"RESOLVED\">Resolve</option></select>"
+				let historyButton = "<button onclick=\"viewHistory("+ticket.id+")\">View History</button>"
+				tableBody.append("<tr><td>"+ticket.title+"</td><td>"+ticket.description+"</td><td>"+ticket.createdBy+"</td><td>"+ticket.assignee+"</td><td>"+ticket.priority+"</td><td>"+ticket.status+"</td><td>"+(ticket.ticket_date || '').split('T')[0]+"</td><td>"+ticket.category+"</td><td>"+downloadButton+"</td><td>"+historyButton+"</td><td>"+actionsSelector+"</td></tr>");
+		    });
+		}
+		
+		function downloadFiles(ticketId) {
+		    const link = document.createElement('a');
+		    link.href = "http://localhost:8282/download/"+ticketId;
+		    link.download = `ticket_${ticketId}_attachments.zip`;
+		    document.body.appendChild(link);
+		    link.click();
+		    document.body.removeChild(link);
+		}
+		
+		function submitDecisions() {
+		    const decisions = [];
+
+		    $(".ticketAction").each(function() {
+		        const ticketId = $(this).data("ticket-id");
+		        const status = $(this).val();
+
+		        if (status === "RESOLVED") {
+		            decisions.push({
+		                ticketId: ticketId,
+		                status: status,
+						email: currentUser
+		            });
+		        }
+		    });
+
+		    if (decisions.length === 0) {
+		        alert("No decisions to submit.");
+		        return;
+		    }
+
+		    $.ajax({
+		        url: "http://localhost:8282/updateTicketStatuses",
+		        type: "POST",
+		        contentType: "application/json",
+		        data: JSON.stringify(decisions),
+		        success: function(response) {
+		            alert("Decisions submitted successfully.");
+		            location.reload();
+		        },
+		        error: function(xhr, status, error) {
+		            alert("Error submitting decisions: " + error);
+		        }
+		    });
+		}
+		
+		function viewHistory(ticketId) {
+			const container = $("#ticketHistoryContainer");
+            const content = $("#ticketHistoryContent");
+			
+			if (currentHistoryTicketId === ticketId && container.is(":visible")) {
+		        container.hide();
+		        currentHistoryTicketId = null;
+		        return;
+	    	}
+		    currentHistoryTicketId = ticketId;
+			
+		    $.ajax({
+		        url: "http://localhost:8282/ticketHistory/"+ticketId,
+		        type: "GET",
+		        success: function(historyList) {
+		            if (!historyList || historyList.length === 0) {
+		                content.html("<p>No history found for this ticket.</p>");
+		                container.show();
+		                return;
+		            }
+
+		            let historyHtml = "<ul>";
+		            historyList.forEach(entry => {
+		                historyHtml += "<li><strong>Action:</strong> "+entry.action+"<br/><strong>By:</strong> "+entry.actionBy+"<br/><strong>Date:</strong> "+entry.actionDate.split('T')[0]+"<br/><strong>Comments:</strong> "+entry.comments+"</li><hr/>"
+		            });
+		            historyHtml += "</ul>";
+
+		            content.html(historyHtml);
+		            container.show();
+		        },
+		        error: function(xhr, status, error) {
+		            alert("Error fetching history: " + error);
+		        }
+		    });
+		}
+
+	</script>
 </body>
 </html>
