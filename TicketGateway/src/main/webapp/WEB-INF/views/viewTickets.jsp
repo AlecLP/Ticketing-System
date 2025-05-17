@@ -23,6 +23,8 @@
 		      <th>Category</th>
 		      <th>Files</th>
 			  <th>History</th>
+			  <th>Action</th>
+			  <th>Comments</th>
 		    </tr>
 		  </thead>
 		  <tbody>
@@ -33,6 +35,7 @@
 		    <h3>Ticket History</h3>
 		    <div id="ticketHistoryContent"></div>
 		</div>
+		<button onclick="submitDecisions()">Submit Decisions</button><br>
 		<button onclick="history.back()">Back</button>
 	</security:authorize>
 	<script>
@@ -65,7 +68,13 @@
 					downloadButton = "<button onclick=\"downloadFiles("+ticket.id+")\">Download Files</button>"
 		        }
 				let historyButton = "<button onclick=\"viewHistory("+ticket.id+")\">View History</button>"
-			    tableBody.append("<tr><td>"+ticket.title+"</td><td>"+ticket.description+"</td><td>"+ticket.createdBy+"</td><td>"+ticket.assignee+"</td><td>"+ticket.priority+"</td><td>"+ticket.status+"</td><td>"+(ticket.ticket_date || '').split('T')[0]+"</td><td>"+ticket.category+"</td><td>"+downloadButton+"</td><td>"+historyButton+"</td></tr>");
+				let actionsSelector = ""
+				let comments = ""
+				if(ticket.status && ticket.status === "RESOLVED"){
+					actionsSelector = "<select class=\"ticketAction\" data-ticket-id=\""+ticket.id+"\"><option value=\"\">-- Select --</option><option value=\"REOPENED\">Re-Open</option><option value=\"CLOSED\">Close</option></select>"
+					comments = "<input type=\"text\" class=\"comments\" data-ticket-id=\""+ticket.id+"\"/>"
+				}
+			    tableBody.append("<tr><td>"+ticket.title+"</td><td>"+ticket.description+"</td><td>"+ticket.createdBy+"</td><td>"+ticket.assignee+"</td><td>"+ticket.priority+"</td><td>"+ticket.status+"</td><td>"+(ticket.ticket_date || '').split('T')[0]+"</td><td>"+ticket.category+"</td><td>"+downloadButton+"</td><td>"+historyButton+"</td><td>"+actionsSelector+"</td><td>"+comments+"</td></tr>");
 		    });
 		}
 		
@@ -110,6 +119,44 @@
 		        },
 		        error: function(xhr, status, error) {
 		            alert("Error fetching history: " + error);
+		        }
+		    });
+		}
+		
+		function submitDecisions() {
+		    const decisions = [];
+
+		    $(".ticketAction").each(function() {
+		        const ticketId = $(this).data("ticket-id");
+		        const status = $(this).val();
+				
+		        if (status === "CLOSED" || status === "REOPENED") {
+					const comment = $(".comments[data-ticket-id='" + ticketId + "']").val() || "";
+		            decisions.push({
+		                ticketId: ticketId,
+		                status: status,
+						email: currentUser,
+						comments: comment
+		            });
+		        }
+		    });
+
+		    if (decisions.length === 0) {
+		        alert("No decisions to submit.");
+		        return;
+		    }
+
+		    $.ajax({
+		        url: "http://localhost:8282/updateTicketStatuses",
+		        type: "POST",
+		        contentType: "application/json",
+		        data: JSON.stringify(decisions),
+		        success: function(response) {
+		            alert("Decisions submitted successfully.");
+		            location.reload();
+		        },
+		        error: function(xhr, status, error) {
+		            alert("Error submitting decisions: " + error);
 		        }
 		    });
 		}

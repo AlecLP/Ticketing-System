@@ -5,6 +5,7 @@ public class TicketStatusDto {
 	private long ticketId;
 	private String status;
 	private String email;
+	private String comments;
 	
 	public TicketStatusDto() {}
 
@@ -30,5 +31,13 @@ public class TicketStatusDto {
 	
 	public void setEmail(String email) {
 		this.email = email;
+	}
+	
+	public String getComments() {
+		return comments;
+	}
+	
+	public void setComments(String comments) {
+		this.comments = comments;
 	}
 }

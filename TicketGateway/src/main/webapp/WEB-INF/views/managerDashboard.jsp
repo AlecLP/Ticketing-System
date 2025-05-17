@@ -24,6 +24,7 @@
 		      <th>Files</th>
 			  <th>History</th>
 			  <th>Action</th>
+			  <th>Comments</th>
 		    </tr>
 		  </thead>
 		  <tbody>
@@ -68,7 +69,8 @@
 		        }
 				let actionsSelector = "<select class=\"ticketAction\" data-ticket-id=\""+ticket.id+"\"><option value=\"\">-- Select --</option><option value=\"APPROVED\">Approve</option><option value=\"REJECTED\">Reject</option></select>"
 				let historyButton = "<button onclick=\"viewHistory("+ticket.id+")\">View History</button>"
-				tableBody.append("<tr><td>"+ticket.title+"</td><td>"+ticket.description+"</td><td>"+ticket.createdBy+"</td><td>"+ticket.assignee+"</td><td>"+ticket.priority+"</td><td>"+ticket.status+"</td><td>"+(ticket.ticket_date || '').split('T')[0]+"</td><td>"+ticket.category+"</td><td>"+downloadButton+"</td><td>"+historyButton+"</td><td>"+actionsSelector+"</td></tr>");
+				let comments = "<input type=\"text\" class=\"comments\" data-ticket-id=\""+ticket.id+"\"/>"
+				tableBody.append("<tr><td>"+ticket.title+"</td><td>"+ticket.description+"</td><td>"+ticket.createdBy+"</td><td>"+ticket.assignee+"</td><td>"+ticket.priority+"</td><td>"+ticket.status+"</td><td>"+(ticket.ticket_date || '').split('T')[0]+"</td><td>"+ticket.category+"</td><td>"+downloadButton+"</td><td>"+historyButton+"</td><td>"+actionsSelector+"</td><td>"+comments+"</td></tr>");
 		    });
 		}
 		
@@ -89,10 +91,12 @@
 		        const status = $(this).val();
 
 		        if (status === "APPROVED" || status === "REJECTED") {
+					const comment = $(".comments[data-ticket-id='" + ticketId + "']").val() || "";
 		            decisions.push({
 		                ticketId: ticketId,
 		                status: status,
-						email: currentUser
+						email: currentUser,
+						comments: comment
 		            });
 		        }
 		    });

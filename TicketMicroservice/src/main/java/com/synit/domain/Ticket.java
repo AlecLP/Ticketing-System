@@ -130,7 +130,12 @@ public class Ticket {
 		dto.setTitle(title);
 		dto.setDescription(description);
 		dto.setCreatedBy(createdBy.getEmail());
-		dto.setAssignee(assignee.getEmail());
+		if(assignee != null) {
+			dto.setAssignee(assignee.getEmail());
+		}
+		else {
+			dto.setAssignee("None");
+		}
 		dto.setPriority(priority);
 		dto.setStatus(status);
 		dto.setTicket_date(ticket_date);

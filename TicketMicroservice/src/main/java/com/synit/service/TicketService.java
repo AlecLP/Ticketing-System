@@ -126,7 +126,7 @@ public class TicketService {
 	    return zipOut;
 	}
 	
-	public void updateTicketStatus(long id, String status, String email) {
+	public void updateTicketStatus(long id, String status, String email, String comments) {
 		Status s = Status.valueOf(status);
 		
 		Ticket ticket = ticketRepository.findById(id).orElse(null);
@@ -138,6 +138,8 @@ public class TicketService {
 			case APPROVED -> Action.APPROVED;
 			case REJECTED -> Action.REJECTED;
 			case RESOLVED -> Action.RESOLVED;
+			case REOPENED -> Action.REOPENED;
+			case CLOSED -> Action.CLOSED;
 			default -> throw new IllegalArgumentException("Unexpected value: " + status);
 		};
 		history.setAction(action);
@@ -152,7 +154,7 @@ public class TicketService {
 		}
 		history.setActionBy(actionBy);
 		history.setActionDate(new Date());
-		history.setComments("Updated status.");
+		history.setComments(comments);
 		
 		ticket.addHistory(history);
 		ticketRepository.save(ticket);

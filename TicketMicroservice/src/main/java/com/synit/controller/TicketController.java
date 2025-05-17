@@ -1,6 +1,8 @@
 package com.synit.controller;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,6 +63,7 @@ public class TicketController {
 	    	TicketSendDto dto = t.toSendDto();
 	    	dtos.add(dto);
 	    }
+	    Collections.sort(dtos, Comparator.comparing(TicketSendDto::getTicket_date).reversed());
 	    return ResponseEntity.ok(dtos);
 	}
 	
@@ -73,6 +76,7 @@ public class TicketController {
 	    	TicketSendDto dto = t.toSendDto();
 	    	dtos.add(dto);
 	    }
+	    Collections.sort(dtos, Comparator.comparing(TicketSendDto::getTicket_date).reversed());
 	    return ResponseEntity.ok(dtos);
 	}
 	
@@ -82,11 +86,12 @@ public class TicketController {
 	    List<Ticket> tickets = ticketService.findByAssigneeEmail(email);
 	    List<TicketSendDto> dtos = new ArrayList<>();
 	    for(Ticket t : tickets) {
-	    	if(t.getStatus() == Status.APPROVED) {
+	    	if(t.getStatus() == Status.APPROVED || t.getStatus() == Status.REOPENED) {
 	    		TicketSendDto dto = t.toSendDto();
 		    	dtos.add(dto);
 	    	}
 	    }
+	    Collections.sort(dtos, Comparator.comparing(TicketSendDto::getTicket_date).reversed());
 	    return ResponseEntity.ok(dtos);
 	}
 	
@@ -108,13 +113,14 @@ public class TicketController {
 			TicketHistoryDto dto = h.toDto();
 			dtos.add(dto);
 		}
+		Collections.sort(dtos, Comparator.comparing(TicketHistoryDto::getActionDate));
 	    return ResponseEntity.ok(dtos);
 	}
 	
 	@PostMapping("/updateTicketStatuses")
 	public ResponseEntity<Void> updateTicketStatuses(@RequestBody List<TicketStatusDto> updates){
 		updates.forEach(update -> {
-	        ticketService.updateTicketStatus(update.getTicketId(), update.getStatus(), update.getEmail());
+	        ticketService.updateTicketStatus(update.getTicketId(), update.getStatus(), update.getEmail(), update.getComments());
 	    });
 	    return ResponseEntity.ok().build();
 	}
