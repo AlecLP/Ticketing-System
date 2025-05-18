@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import com.synit.common_classes.TicketPdfMessage;
 import com.synit.common_enums.Priority;
 import com.synit.common_enums.Status;
 import com.synit.dtos.TicketSendDto;
@@ -142,5 +143,22 @@ public class Ticket {
 		dto.setCategory(category);
 		dto.setFileAttachmentPaths(fileAttachmentPaths);
 		return dto;
+	}
+	
+	public TicketPdfMessage toPdfMessage() {
+		TicketPdfMessage pdfMessage = new TicketPdfMessage();
+		pdfMessage.setId(id);
+		pdfMessage.setTitle(title);
+		pdfMessage.setDescription(description);
+		pdfMessage.setCreatedBy(createdBy.getEmail());
+		pdfMessage.setAssignee(assignee != null ? assignee.getEmail() : "None");
+		pdfMessage.setPriority(priority.name());
+		pdfMessage.setStatus(status.name());
+		pdfMessage.setDate(ticket_date);
+		pdfMessage.setCategory(category);
+		for(TicketHistory h : history) {
+			pdfMessage.addHistory(h.toPdfMessage());
+		}
+		return pdfMessage;
 	}
 }

@@ -2,6 +2,7 @@ package com.synit.domain;
 
 import java.util.Date;
 
+import com.synit.common_classes.TicketHistoryPdfMessage;
 import com.synit.common_enums.Action;
 import com.synit.dtos.TicketHistoryDto;
 
@@ -82,5 +83,14 @@ public class TicketHistory {
 		dto.setActionDate(actionDate);
 		dto.setComments(comments);
 		return dto;
+	}
+	public TicketHistoryPdfMessage toPdfMessage() {
+		TicketHistoryPdfMessage message = new TicketHistoryPdfMessage();
+		message.setId(id);
+		message.setAction(action.name());
+		message.setActionBy(actionBy.getEmail());
+		message.setActionDate(actionDate);
+		message.setComments(comments);
+		return message;
 	}
 }

@@ -15,10 +15,12 @@ import java.util.zip.ZipOutputStream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.synit.common_classes.TicketMessage;
 import com.synit.common_enums.Action;
 import com.synit.common_enums.Priority;
 import com.synit.common_enums.Status;
@@ -37,8 +39,23 @@ public class TicketService {
 	@Autowired
 	EmployeeService employeeService;
 	
+	private final JmsTemplate jmsTemplate;
+	
 	@Value("${ticket.upload.dir}")
     private String uploadDir;
+	
+	public TicketService(JmsTemplate jmsTemplate) {
+		this.jmsTemplate = jmsTemplate;
+	}
+	
+	public void sendMessage(String to, String ticketTitle, String action, String comments) {
+		TicketMessage message = new TicketMessage(to, ticketTitle, action, comments);
+		jmsTemplate.convertAndSend("notification.queue", message);
+	}
+	
+	public void sendPdfMessage(Ticket ticket) {
+		jmsTemplate.convertAndSend("pdf.queue", ticket.toPdfMessage());
+	}
 	
 	public void saveTicket(TicketDto ticketDto, MultipartFile[] files) {
 		Date currentDate = new Date();
@@ -154,9 +171,17 @@ public class TicketService {
 		}
 		history.setActionBy(actionBy);
 		history.setActionDate(new Date());
-		history.setComments(comments);
+		history.setComments(comments);	
 		
 		ticket.addHistory(history);
+		
 		ticketRepository.save(ticket);
+		
+		if(action != Action.RESOLVED) {
+			sendMessage(ticket.getCreatedBy().getEmail(), ticket.getTitle(), action.name(), comments);
+		}
+		else {
+			sendPdfMessage(ticket);
+		}
 	}
 }
