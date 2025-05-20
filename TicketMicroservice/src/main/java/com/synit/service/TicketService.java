@@ -106,9 +106,10 @@ public class TicketService {
 		            e.printStackTrace();
 		        }
 		    }
-		    saved.setFileAttachmentPaths(fileAttachmentPaths);
-		    ticketRepository.save(saved);
+		    saved.setFileAttachmentPaths(fileAttachmentPaths); 
 		}
+		ticketRepository.save(saved);
+		sendMessage(ticket.getAssignee().getEmail(), ticket.getTitle(), history.getAction().name(), history.getComments());
 	}
 	
 	public List<Ticket> findByCreatedByEmail(String email){
@@ -177,11 +178,14 @@ public class TicketService {
 		
 		ticketRepository.save(ticket);
 		
-		if(action != Action.RESOLVED) {
-			sendMessage(ticket.getCreatedBy().getEmail(), ticket.getTitle(), action.name(), comments);
+		if(action == Action.RESOLVED) {
+			sendPdfMessage(ticket);
 		}
 		else {
-			sendPdfMessage(ticket);
+			if(action == Action.APPROVED) {
+				sendMessage(ticket.getAssignee().getEmail(), ticket.getTitle(), action.name(), comments);
+			}
+			sendMessage(ticket.getCreatedBy().getEmail(), ticket.getTitle(), action.name(), comments);
 		}
 	}
 }

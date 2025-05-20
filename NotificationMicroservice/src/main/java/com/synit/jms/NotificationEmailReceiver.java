@@ -35,10 +35,9 @@ public class NotificationEmailReceiver {
 		SimpleMailMessage email = new SimpleMailMessage();
 		email.setFrom("alecphegley@gmail.com");
 		email.setTo(message.getTo());
-		email.setSubject("Ticket Status Update");
+		email.setSubject("Ticket Notification");
 		
-		String body = "Your Ticket: " +message.getTicketTitle() +" has had its status updated. Information below:\n"
-				+"Action: " +message.getAction() +"\nComments: " +message.getComments();
+		String body = "Ticket Details:\nTitle: "+message.getTicketTitle() +"\nAction: " +message.getAction() +"\nComments: " +message.getComments();
 		email.setText(body);
 
         mailSender.send(email);
