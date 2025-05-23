@@ -10,6 +10,7 @@ import com.synit.common_enums.Status;
 import com.synit.dtos.TicketSendDto;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -20,6 +21,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 
 @Entity
 public class Ticket {
@@ -45,7 +48,9 @@ public class Ticket {
 	@Enumerated(EnumType.STRING)
 	private Status status;
 	
-	private Date ticket_date;
+	@Column(name = "ticket_date")  // maps DB column to Java field
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ticketDate;
 	private String category;
 	@ElementCollection
 	private List<String> fileAttachmentPaths = new ArrayList<>();
@@ -98,10 +103,10 @@ public class Ticket {
 		this.status = status;
 	}
 	public Date getDate() {
-		return ticket_date;
+		return ticketDate;
 	}
-	public void setDate(Date ticket_date) {
-		this.ticket_date = ticket_date;
+	public void setDate(Date ticketDate) {
+		this.ticketDate = ticketDate;
 	}
 	public String getCategory() {
 		return category;
@@ -139,7 +144,7 @@ public class Ticket {
 		}
 		dto.setPriority(priority);
 		dto.setStatus(status);
-		dto.setTicket_date(ticket_date);
+		dto.setTicket_date(ticketDate);
 		dto.setCategory(category);
 		dto.setFileAttachmentPaths(fileAttachmentPaths);
 		return dto;
@@ -154,7 +159,7 @@ public class Ticket {
 		pdfMessage.setAssignee(assignee != null ? assignee.getEmail() : "None");
 		pdfMessage.setPriority(priority.name());
 		pdfMessage.setStatus(status.name());
-		pdfMessage.setDate(ticket_date);
+		pdfMessage.setDate(ticketDate);
 		pdfMessage.setCategory(category);
 		for(TicketHistory h : history) {
 			pdfMessage.addHistory(h.toPdfMessage());

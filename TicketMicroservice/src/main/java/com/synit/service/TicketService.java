@@ -7,6 +7,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -112,6 +114,10 @@ public class TicketService {
 		sendMessage(ticket.getAssignee().getEmail(), ticket.getTitle(), history.getAction().name(), history.getComments());
 	}
 	
+	public Ticket saveTicketObj(Ticket ticket) {
+		return ticketRepository.save(ticket);
+	}
+	
 	public List<Ticket> findByCreatedByEmail(String email){
 		return ticketRepository.findByCreatedByEmail(email);
 	}
@@ -187,5 +193,9 @@ public class TicketService {
 			}
 			sendMessage(ticket.getCreatedBy().getEmail(), ticket.getTitle(), action.name(), comments);
 		}
+	}
+	
+	public List<Ticket> findByStatusAndDateBefore(Status status, Date cutoffDate){
+		return ticketRepository.findByStatusAndTicketDateBefore(Status.OPEN, cutoffDate);
 	}
 }
