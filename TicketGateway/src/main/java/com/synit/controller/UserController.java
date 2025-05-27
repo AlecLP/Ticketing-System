@@ -63,7 +63,7 @@ public class UserController {
 			if(auth != null) {
 				new SecurityContextLogoutHandler().logout(httpServletRequest, httpServletResponse, auth);
 			}
-			message = "Logout";
+			message = "Logged out";
 			return "login";
 		}
 		model.addAttribute("Message", message);
